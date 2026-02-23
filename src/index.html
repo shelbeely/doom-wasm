@@ -25,7 +25,6 @@
                 background-color: #111;
                 margin: 0;
                 padding: 2ch;
-                /* vietnamese */
             }
 
             #container {
@@ -54,9 +53,9 @@
             <canvas class="frame" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
         </div>
         <script>
-            var commonArgs = ["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
+            const commonArgs = ["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
 
-            var Module = {
+            const Module = {
                 onRuntimeInitialized: () => {
                     callMain(commonArgs);
                 },
@@ -70,7 +69,7 @@
                     console.error(text);
                 },
                 canvas: (function () {
-                    var canvas = document.getElementById("canvas");
+                    const canvas = document.getElementById("canvas");
                     canvas.addEventListener(
                         "webglcontextlost",
                         function (e) {
@@ -101,6 +100,6 @@
                 };
             };
         </script>
-        <script type="text/javascript" src="websockets-doom.js"></script>
+        <script src="websockets-doom.js"></script>
     </body>
 </html>
