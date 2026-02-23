@@ -61,6 +61,20 @@ freely available at https://doomwiki.org/wiki/DOOM1.WAD.
 
 ## CI
 
-There is **no** automated compile/test CI for the Wasm build (it requires Emscripten).
-The only automated workflow is Semgrep static analysis (`.github/workflows/semgrep.yml`).
-After any C source change, run `./scripts/build.sh` locally to verify.
+Two automated workflows run on every push to `main`/`master`:
+
+| Workflow | File | Purpose |
+|----------|------|---------|
+| Semgrep | `.github/workflows/semgrep.yml` | Static analysis |
+| GitHub Pages | `.github/workflows/pages.yml` | Build + deploy to GitHub Pages |
+
+The Pages workflow installs Emscripten 3.1.64, downloads the freely-distributable
+shareware `doom1.wad` (MD5 `f0cefca49926d00903cf57551d901abe`), runs
+`./scripts/build.sh`, and publishes `index.html`, `websockets-doom.js`,
+`websockets-doom.wasm`, `doom1.wad`, and `default.cfg` to GitHub Pages.
+
+To enable GitHub Pages for the repository go to **Settings → Pages → Build and
+deployment → Source** and select **GitHub Actions**.
+
+After any C source change, also run `./scripts/build.sh` locally to verify before
+pushing.
