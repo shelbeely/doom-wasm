@@ -31,7 +31,7 @@ emmake make
 | `-s WASM=1` | Emit WebAssembly |
 | `-s USE_SDL=2` / `USE_SDL_MIXER=2` / `USE_SDL_NET=2` | Emscripten SDL ports |
 | `-s ASYNCIFY` | Allow `emscripten_sleep` / blocking-style async |
-| `-s EXPORTED_RUNTIME_METHODS=[['FS','ccall']]` | Expose FS and ccall to JS |
+| `-s EXPORTED_RUNTIME_METHODS=[['FS','ccall','callMain']]` | Expose FS, ccall, and callMain to JS |
 | `-s TOTAL_MEMORY=64MB` | Fixed heap — growth is disabled |
 | `-s FORCE_FILESYSTEM=1` | Virtual FS needed for WAD loading |
 | `-lwebsocket.js` | Emscripten WebSockets library |
