@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: sudo apt-get install -y automake
+
+      - name: Set up Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+
+      - name: Download shareware doom1.wad
+        run: |
+          curl -L "https://distro.ibiblio.org/slitaz/sources/packages/d/doom1.wad" \
+            -o src/doom1.wad
+
+      - name: Build WebAssembly
+        run: |
+          emconfigure autoreconf -fiv
+          ac_cv_exeext=".html" emconfigure ./configure --host=none-none-none
+          emmake make
+
+      - name: Collect deployment files
+        run: |
+          mkdir -p /tmp/pages
+          cp src/index.html /tmp/pages/
+          cp src/websockets-doom.js /tmp/pages/
+          cp src/websockets-doom.wasm /tmp/pages/
+          cp src/default.cfg /tmp/pages/
+          cp src/doom1.wad /tmp/pages/
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: /tmp/pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

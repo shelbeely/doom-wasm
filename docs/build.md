@@ -61,6 +61,26 @@ freely available at https://doomwiki.org/wiki/DOOM1.WAD.
 
 ## CI
 
-There is **no** automated compile/test CI for the Wasm build (it requires Emscripten).
-The only automated workflow is Semgrep static analysis (`.github/workflows/semgrep.yml`).
+The Semgrep static-analysis workflow runs on every push and pull request
+(`.github/workflows/semgrep.yml`).
+
 After any C source change, run `./scripts/build.sh` locally to verify.
+
+## GitHub Pages
+
+The GitHub Pages deployment workflow (`.github/workflows/deploy-pages.yml`) runs
+automatically on every push to `main` / `master` and can also be triggered manually
+via the **Actions** tab → **Deploy to GitHub Pages** → **Run workflow**.
+
+The workflow:
+1. Installs Emscripten and `automake` on the runner.
+2. Downloads the freely distributable shareware `doom1.wad` from a public mirror.
+3. Builds the WebAssembly binary with `emconfigure` / `emmake make`.
+4. Deploys `index.html`, `websockets-doom.js`, `websockets-doom.wasm`,
+   `default.cfg`, and `doom1.wad` to the `github-pages` environment.
+
+After the workflow succeeds the game is playable at:
+`https://<owner>.github.io/<repo>/`
+
+> **Note:** GitHub Pages must be enabled in the repository settings
+> (*Settings → Pages → Source → GitHub Actions*) before the first deployment.
