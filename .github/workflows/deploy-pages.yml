@@ -39,14 +39,33 @@ jobs:
           ac_cv_exeext=".html" emconfigure ./configure --host=none-none-none
           emmake make
 
-      - name: Collect deployment files
+      - name: Collect build assets
         run: |
-          mkdir -p /tmp/pages
-          cp src/index.html /tmp/pages/
-          cp src/websockets-doom.js /tmp/pages/
-          cp src/websockets-doom.wasm /tmp/pages/
-          cp src/default.cfg /tmp/pages/
-          cp src/doom1.wad /tmp/pages/
+          mkdir -p /tmp/build
+          cp src/index.html /tmp/build/
+          cp src/websockets-doom.js /tmp/build/
+          cp src/websockets-doom.wasm /tmp/build/
+          cp src/default.cfg /tmp/build/
+          cp src/doom1.wad /tmp/build/
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4.1.3
+        with:
+          name: doom-wasm-build
+          path: /tmp/build/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: doom-wasm-build
+          path: /tmp/pages
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -56,13 +75,6 @@ jobs:
         with:
           path: /tmp/pages
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-22.04
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

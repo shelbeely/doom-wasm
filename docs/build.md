@@ -72,12 +72,18 @@ The GitHub Pages deployment workflow (`.github/workflows/deploy-pages.yml`) runs
 automatically on every push to `main` / `master` and can also be triggered manually
 via the **Actions** tab → **Deploy to GitHub Pages** → **Run workflow**.
 
-The workflow:
+The workflow is split into two jobs so build and deployment are decoupled:
+
+**`build` job** — compiles the game and stores the result as a reusable artifact:
 1. Installs Emscripten and `automake` on the runner.
 2. Downloads the freely distributable shareware `doom1.wad` from a public mirror.
 3. Builds the WebAssembly binary with `emconfigure` / `emmake make`.
-4. Deploys `index.html`, `websockets-doom.js`, `websockets-doom.wasm`,
-   `default.cfg`, and `doom1.wad` to the `github-pages` environment.
+4. Uploads `index.html`, `websockets-doom.js`, `websockets-doom.wasm`,
+   `default.cfg`, and `doom1.wad` as the `doom-wasm-build` Actions artifact.
+
+**`deploy` job** — serves the pre-built artifact without recompiling:
+1. Downloads the `doom-wasm-build` artifact produced by the `build` job.
+2. Publishes it to the `github-pages` environment.
 
 After the workflow succeeds the game is playable at:
 `https://<owner>.github.io/<repo>/`
