@@ -29,7 +29,7 @@ Then:
 
 ```
 cd src
-python -m SimpleHTTPServer
+python3 -m http.server
 ```
 
 Then open your browser and point it to http://0.0.0.0:8000/
